@@ -24,7 +24,7 @@ BaseMap="scancode_map led_map_left leftHand slave1 rightHand"
 # NOTE: To combine kll files into a single layout, separate them by spaces
 # e.g.  DefaultMap="mylayout mylayoutmod"
 #DefaultMap="mdergo1Overlay lcdFuncMap"
-DefaultMap="MDErgo1-Default-0 lcdFuncMap"
+DefaultMap="xythobuz-MDErgo1-Default-0 lcdFuncMap"
 
 # This is where you set the additional layers
 # NOTE: Indexing starts at 1
@@ -34,8 +34,8 @@ DefaultMap="MDErgo1-Default-0 lcdFuncMap"
 #       PartialMaps[3]="layer3"
 #PartialMaps[1]="iced_func"
 #PartialMaps[2]="iced_numpad"
-PartialMaps[1]="MDErgo1-Default-1"
-PartialMaps[2]="MDErgo1-Default-2"
+PartialMaps[1]="xythobuz-MDErgo1-Default-1"
+PartialMaps[2]="xythobuz-MDErgo1-Default-2"
 
 
 
