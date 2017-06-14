@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2016 by Jacob Alexander
+/* Copyright (C) 2015-2017 by Jacob Alexander
  *
  * This file is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,9 @@
 #if defined(ConnectEnabled_define)
 #include <connect_scan.h>
 #endif
+
+// KLL Include
+#include <kll.h>
 
 // Local Includes
 #include "lcd_scan.h"
@@ -164,6 +167,26 @@ void LCD_writeControlReg( uint8_t byte )
 
 	// Set A0 high to go back to display register mode
 	GPIOC_PSOR |= (1<<7);
+}
+
+// Write to a data register with a0 bit high
+void LCD_writeDataReg( uint8_t byte )
+{
+	// Wait for TxFIFO to be empt
+	while ( SPI0_TxFIFO_CNT != 0 );
+        
+        // Set A0 high to enter display register mode
+        GPIOC_PSOR |= (1<<7);
+
+	// Write byte to SPI FIFO
+	SPI_write( &byte, 1 );
+
+	// Wait for TxFIFO to be empty
+	while ( SPI0_TxFIFO_CNT != 0 );
+
+	// Make sure data has transferred
+	delayMicroseconds(10); // XXX Adjust if SPI speed changes
+
 }
 
 // Write to display register
@@ -399,7 +422,7 @@ typedef struct LCD_layerStackExact_args {
 	uint8_t numArgs;
 	uint16_t layers[4];
 } LCD_layerStackExact_args;
-void LCD_layerStackExact_capability( uint8_t state, uint8_t stateType, uint8_t *args )
+void LCD_layerStackExact_capability( TriggerMacro *trigger, uint8_t state, uint8_t stateType, uint8_t *args )
 {
 	// Display capability name
 	if ( stateType == 0xFF && state == 0xFF )
@@ -503,7 +526,7 @@ void LCD_layerStackExact_capability( uint8_t state, uint8_t stateType, uint8_t *
 // Will only work on a master node when using the interconnect (use LCD_layerStackExact_capability instead)
 uint16_t LCD_layerStack_prevSize = 0;
 uint16_t LCD_layerStack_prevTop  = 0;
-void LCD_layerStack_capability( uint8_t state, uint8_t stateType, uint8_t *args )
+void LCD_layerStack_capability( TriggerMacro *trigger, uint8_t state, uint8_t stateType, uint8_t *args )
 {
 	// Display capability name
 	if ( stateType == 0xFF && state == 0xFF )
@@ -555,7 +578,7 @@ void LCD_layerStack_capability( uint8_t state, uint8_t stateType, uint8_t *args 
 	}
 #endif
 	// Call LCD_layerStackExact directly
-	LCD_layerStackExact_capability( state, stateType, (uint8_t*)&stack_args );
+	LCD_layerStackExact_capability( trigger, state, stateType, (uint8_t*)&stack_args );
 }
 
 
@@ -587,24 +610,33 @@ void cliFunc_lcdCmd( char* args )
 
 	// No args
 	if ( *arg1Ptr == '\0' )
+    {
+		print("No args provided.");
+		print( NL );
 		return;
-
+    }
 	// SPI Command
 	uint8_t cmd = (uint8_t)numToInt( arg1Ptr );
 
-	curArgs = arg2Ptr; // Use the previous 2nd arg pointer to separate the next arg from the list
-	CLI_argumentIsolation( curArgs, &arg1Ptr, &arg2Ptr );
-
 	// Single Arg
-	if ( *arg1Ptr == '\0' )
-		goto cmd;
+	if ( *arg2Ptr == '\0' )
+	{
+        info_msg("Sending- ");
+		printHex( cmd );
+		print( NL );
+		LCD_writeControlReg( cmd );
+		return;
+	}
 
-	// TODO Deal with a0
-cmd:
-	info_msg("Sending - ");
-	printHex( cmd );
-	print( NL );
-	LCD_writeControlReg( cmd );
+	if ( *arg2Ptr != '\0' ) 
+	{
+		info_msg("Sending WITH A0 FLAG SET- ");
+		printHex( cmd );
+		print( NL );
+		LCD_writeDataReg( cmd );
+		return;
+    }
+
 }
 
 void cliFunc_lcdColor( char* args )
@@ -676,8 +708,7 @@ void cliFunc_lcdDisp( char* args )
 		if ( *arg1Ptr == '\0' )
 			break;
 
-		uint8_t value = numToInt( arg1Ptr );
-
+		uint8_t value = numToInt( arg1Ptr ); 
 		// Write buffer to SPI
 		SPI_write( &value, 1 );
 	}

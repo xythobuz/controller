@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
-#
-# Keyboard: Infinity 60% (MD1)
-#
+# This is a build script template
 # These build scripts are just a convenience for configuring your keyboard (less daunting than CMake)
 # Jacob Alexander 2015-2016
-
-
 
 #################
 # Configuration #
@@ -13,7 +9,7 @@
 
 # Feel free to change the variables in this section to configure your keyboard
 
-BuildPath="IC60"
+BuildPath="ps2_converter"
 
 ## KLL Configuration ##
 
@@ -32,6 +28,7 @@ DefaultMap="md1Overlay stdFuncMap"
 #       PartialMaps[2]="layer2"
 #       PartialMaps[3]="layer3"
 PartialMaps[1]="hhkbpro2"
+PartialMaps[2]="colemak"
 
 
 
@@ -44,16 +41,17 @@ PartialMaps[1]="hhkbpro2"
 # NOTE: Changing any of these variables will require a force build to compile correctly
 
 # Keyboard Module Configuration
-ScanModule="Infinity_60%"
+ScanModule="PS2"
 MacroModule="PartialMap"
 OutputModule="pjrcUSB"
 DebugModule="full"
 
 # Microcontroller
-Chip="mk20dx128vlf5"
+Chip="mk20dx256"
 
 # Compiler Selection
 Compiler="gcc"
+
 
 
 
