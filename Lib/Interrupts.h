@@ -1,4 +1,4 @@
-/* Copyright (C) 2013-2015 by Jacob Alexander
+/* Copyright (C) 2013-2018 by Jacob Alexander
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,15 +27,32 @@
 
 #pragma once
 
-// ARM
-#if defined(_mk20dx128_) || defined(_mk20dx128vlf5_) || defined(_mk20dx256_) || defined(_mk20dx256vlh7_)
+#include <Lib/mcu_compat.h>
 
-#include <Lib/mk20dx.h>
+// Kinetis (ARM)
+#if defined(_kinetis_)
+
+#include <Lib/kinetis.h>
+
+// SAM (ARM)
+#elif defined(_sam_)
+
+#include <Lib/sam.h>
+
+// NRF5 (ARM)
+#elif defined(_nrf_)
+
+#include <Lib/nrf5.h>
 
 // AVR
-#elif defined(_at90usb162_) || defined(_atmega32u4_) || defined(_at90usb646_) || defined(_at90usb1286_)
+#elif defined(_avr_at_)
 
 #include <avr/interrupt.h>
+
+// Host
+#elif defined(_host_)
+
+#include <Lib/host.h>
 
 #endif
 
@@ -44,7 +61,7 @@
 // ----- Defines -----
 
 // ARM
-#if defined(_mk20dx128_) || defined(_mk20dx128vlf5_) || defined(_mk20dx256_) || defined(_mk20dx256vlh7_)
+#if defined(_kinetis_) || defined(_sam_) || defined(_nrf_)
 
 // Map the Interrupt Enable/Disable to the AVR names
 #define cli() __disable_irq()
@@ -52,7 +69,11 @@
 
 
 // AVR
-#elif defined(_at90usb162_) || defined(_atmega32u4_) || defined(_at90usb646_) || defined(_at90usb1286_)
+#elif defined(_avr_at_)
+
+
+// Host
+#elif defined(_host_)
 
 
 #endif

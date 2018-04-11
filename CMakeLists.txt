@@ -1,6 +1,6 @@
 ###| CMAKE Kiibohd Controller |###
 #
-# Jacob Alexander 2011-2016
+# Jacob Alexander 2011-2017
 # Due to this file's usefulness:
 #
 # Released into the Public Domain
@@ -17,17 +17,43 @@
 #| You _MUST_ clean the build directory if you change this value
 #|
 set( CHIP
-#       "at90usb162"       # Teensy   1.0 (avr)
-#       "atmega32u4"       # Teensy   2.0 (avr)
-#       "at90usb646"       # Teensy++ 1.0 (avr)
-#       "at90usb1286"      # Teensy++ 2.0 (avr)
+#       "atmega32u4"       # Teensy   2.0 (avr) - Deprecated
+#       "at90usb1286"      # Teensy++ 2.0 (avr) - Deprecated
 #       "mk20dx128"        # Teensy   3.0 (arm)
 	"mk20dx128vlf5"    # McHCK       mk20dx128vlf5
+#	"mk20dx128vlf5"    # Kiibohd-dfu mk20dx128vlh7
 #       "mk20dx256"        # Teensy   3.1,3.2 (arm)
 #       "mk20dx256vlh7"    # Kiibohd-dfu mk20dx256vlh7
+#       "mk22fx512avlh7"   # Kiibohd-dfu mk22fx512avlh7
+#       "mk64fx512"        # Teensy   3.5 (arm)
+#       "mk66fx1m0"        # Teensy   3.6 (arm)
+#       "host"             # System compiler test environment
 	CACHE STRING "Microcontroller Chip"
 )
 
+
+
+###
+# Debug
+#
+
+# Use a JLink programmer (no bootloader required)
+set( JLINK
+	0
+	CACHE STRING "Enable JLINK Programming/Debugging"
+)
+
+#| swd or jtag
+set( JLINK_INTERFACE
+	"swd"
+	CACHE STRING "JLink Interface"
+)
+
+#| Speed in kHz or auto
+set( JLINK_SPEED
+	"auto"
+	CACHE STRING "JLink Speed"
+)
 
 
 ###
@@ -65,7 +91,7 @@ include( initialize )
 #| Please look at the {Scan,Macro,Output,Debug} for information on the modules and how to create new ones
 
 ##| Deals with acquiring the keypress information and turning it into a key index
-set(   ScanModule "MD1"
+set(   ScanModule "Infinity_60"
 	CACHE STRING "Scan Module" )
 
 ##| Provides the mapping functions for DefaultMap and handles any macro processing before sending to the OutputModule
@@ -73,7 +99,7 @@ set(  MacroModule "PartialMap"
 	CACHE STRING "Macro Module" )
 
 ##| Sends the current list of usb key codes through USB HID
-set( OutputModule "pjrcUSB"
+set( OutputModule "USB"
 	CACHE STRING "Output Module"
 )
 
@@ -108,6 +134,10 @@ set(  DebugModule "full"
 #| NOTE2: Layers are always based up the BaseMap (which should be an ANSI-like mapping)
 #| NOTE3: Compiler looks in kll/layouts and the build directory for layout files (precedence on build directory)
 
+set(  LayoutName ""
+	CACHE STRING "Layout Name for Keyboard, often unset. No functional purpose other than documentation."
+)
+
 ##| Set the base keyboard .kll map, defaults to "defaultMap" if not found
 ##| Looks in Scan/<Module Name> for the available BaseMaps
 set(     BaseMap "defaultMap"
@@ -115,12 +145,12 @@ set(     BaseMap "defaultMap"
 
 ##| Layer additonal .kll maps on the BaseMap, layers are in order from 1st to nth
 ##| Can be set to ""
-set(  DefaultMap "md1Overlay stdFuncMap"
+set(  DefaultMap "ic60/md1Overlay stdFuncMap"
 	CACHE STRING "KLL DefaultMap" )
 
 ##| ParitalMaps available on top of the BaseMap. See above for syntax on specifying multiple layers vs. layering
 ##| Can be set to ""
-set( PartialMaps "hhkbpro2"
+set( PartialMaps "ic60/hhkbpro2"
 	CACHE STRING "KLL PartialMaps/Layer Definitions" )
 
 
@@ -149,8 +179,16 @@ set( TARGET kiibohd )
 #| USB Descriptor iManufacturer string
 set( MANUFACTURER "Kiibohd" )
 
+#| Flashing Station name
+#| This is a placeholder value, the flashing process will overwrite this value for you
+set( FLASHING_STATION_ID "xXXx" )
+
 #| General Settings
 cmake_minimum_required( VERSION 2.8 )
+
+#| Compiler Version (only available after project() command)
+message( STATUS "Full Compiler:" )
+message( "${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_VERSION}" )
 
 
 

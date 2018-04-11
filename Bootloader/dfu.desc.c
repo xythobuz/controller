@@ -1,5 +1,5 @@
 // Originally Generated from MCHCK Toolkit
-/* Copyright (c) Jacob Alexander 2014-2016 <haata@kiibohd.com>
+/* Copyright (c) Jacob Alexander 2014-2017 <haata@kiibohd.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ static const struct usb_config_1 usb_config_1 = {
 		.wTotalLength = sizeof(struct usb_config_1),
 		.bNumInterfaces = 1,
 		.bConfigurationValue = 1,
-		.iConfiguration = 0,
+		.iConfiguration = 5,
 		.one = 1,
 		.bMaxPower = 50
 	},
@@ -68,11 +68,8 @@ static const struct usb_config_1 usb_config_1 = {
 		},
 		.will_detach = 1,
 		.manifestation_tolerant = 0,
-#if defined(_mk20dx128vlf5_) // Kiibohd-dfu / McHCK
 		.can_upload = 0,
-#elif defined(_mk20dx256vlh7_) // Kiibohd-dfu
 		.can_upload = 1,
-#endif
 		.can_download = 1,
 		.wDetachTimeOut = 0,
 		.wTransferSize = USB_DFU_TRANSFER_SIZE,
@@ -113,6 +110,7 @@ struct usb_desc_string_t * const dfu_device_str_desc[] = {
 	USB_DESC_STRING(STR_PRODUCT),
 	USB_DESC_STRING(STR_SERIAL),
 	USB_DESC_STRING(STR_ALTNAME),
+	USB_DESC_STRING(STR_CONFIG_NAME),
 	NULL
 };
 
@@ -124,4 +122,16 @@ const struct usbd_device dfu_device = {
 		NULL
 	}
 };
+
+// Initialize DFU USB descriptor
+void dfu_usb_init()
+{
+	usb_init( &dfu_device );
+}
+
+// Poll USB for changes in DFU status
+void dfu_usb_poll()
+{
+	usb_poll();
+}
 

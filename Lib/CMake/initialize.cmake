@@ -1,6 +1,6 @@
 ###| CMAKE Kiibohd Controller Initialization |###
 #
-# Written by Jacob Alexander in 2011-2014 for the Kiibohd Controller
+# Written by Jacob Alexander in 2011-2018 for the Kiibohd Controller
 #
 # Released into the Public Domain
 #
@@ -17,21 +17,66 @@ set( CMAKE_DISABLE_SOURCE_CHANGES  ON )
 set( CMAKE_DISABLE_IN_SOURCE_BUILD ON )
 
 
+
+###
+# Detect Compiling System Information
+#
+
+#| CPU Type
+find_program( UNAME uname )
+message( STATUS "Build CPU Detected:" )
+execute_process( COMMAND ${UNAME} -m
+	OUTPUT_VARIABLE DETECTED_PROCESSOR_ARCHITECTURE
+	ERROR_QUIET
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+message( "${DETECTED_PROCESSOR_ARCHITECTURE}" )
+
+
+#| Detect OS
+message( STATUS "Build Kernel Detected:" )
+execute_process( COMMAND ${UNAME} -sr
+	OUTPUT_VARIABLE DETECTED_BUILD_KERNEL
+	ERROR_QUIET
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+message( "${DETECTED_BUILD_KERNEL}" )
+
+
+
 ###
 # Compiler Lookup
 #
 
 #| avr match
-if ( "${CHIP}" MATCHES "^at90usb.*$" OR "${CHIP}" MATCHES "^atmega.*$" )
+if (
+	"${CHIP}" MATCHES "^at90usb.*$" OR
+	"${CHIP}" MATCHES "^atmega.*$"
+)
 	set( COMPILER_FAMILY "avr" )
 
 #| arm match
-elseif ( "${CHIP}" MATCHES "^mk20dx.*$" )
+elseif (
+	"${CHIP}" MATCHES "^mk2.*$" OR
+	"${CHIP}" MATCHES "^mk6.*$" OR
+	"${CHIP}" MATCHES "^sam.*$" OR
+	"${CHIP}" MATCHES "^nrf.*$"
+)
 	set( COMPILER_FAMILY "arm" )
+
+#| Host compiler match
+elseif ( "${CHIP}" MATCHES "^host$" )
+	set( COMPILER_FAMILY "host" )
 
 #| Invalid CHIP
 else ()
 	message( FATAL_ERROR "CHIP: ${CHIP} - Unknown chip, could not choose compiler..." )
+endif ()
+
+#| Override Compiler
+if ( CompilerOverride )
+	message ( "Compiler Override to ${CompilerOverride}" )
+	set( COMPILER_FAMILY "${CompilerOverride}" )
 endif ()
 
 #| Results of Compiler Lookup

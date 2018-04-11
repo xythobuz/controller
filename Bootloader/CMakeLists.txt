@@ -1,6 +1,6 @@
 ###| CMAKE Kiibohd Controller Bootloader |###
 #
-# Jacob Alexander 2011-2016
+# Jacob Alexander 2011-2017
 # Due to this file's usefulness:
 #
 # Released into the Public Domain
@@ -43,6 +43,26 @@ set ( COMPILER
 
 
 ###
+# Product String
+#
+set ( BOOT_PRODUCT_STR
+	"Kiibohd DFU Bootloader"
+	CACHE STRING "Product String"
+)
+
+
+
+###
+# Flashing Station ID
+#
+set ( FLASHING_STATION_ID
+	"xXXx"
+	CACHE STRING "Placeholder string for flashing station"
+)
+
+
+
+###
 # Bootloader Configuration
 #
 set ( BOOTLOADER 1 )
@@ -62,17 +82,19 @@ include ( initialize )
 #
 set ( SRCS
 	main.c
+	debug.c
 	dfu.c
 	dfu.desc.c
 	flash.c
 	kinetis.c
 	usb.c
+	Devices/${CHIP}.c
 )
 
-# Only compile in if necessary
-if ( CHIP STREQUAL "mk20dx256vlh7" )
-	set( SRCS ${SRCS}
-		debug.c
+# Add device file, if it exists
+if ( EXISTS ${CMAKE_SOURCE_DIR}/Devices/${BOOT_PRODUCT_STR}.c )
+	set ( SRCS ${SRCS}
+		Devices/${BOOT_PRODUCT_STR}.c
 	)
 endif ()
 
@@ -93,6 +115,7 @@ endforeach ()
 #
 include_directories (
 	${CMAKE_SOURCE_DIR}/../Lib
+	${CMAKE_SOURCE_DIR}/..
 	${CMAKE_SOURCE_DIR}
 )
 
@@ -110,6 +133,10 @@ set ( TARGET kiibohd_bootloader )
 
 #| General Settings
 cmake_minimum_required ( VERSION 2.8 )
+
+#| Compiler Version (only available after project() command)
+message( STATUS "Full Compiler:" )
+message( "${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_VERSION}" )
 
 
 
@@ -152,7 +179,7 @@ find_package ( Ctags ) # Optional
 
 if ( CTAGS_EXECUTABLE )
 	# Generate the ctags
-	execute_process( COMMAND ctags ${SRCS}
+	execute_process( COMMAND ${CTAGS_EXECUTABLE} ${SRCS}
 		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	)
 endif ()
