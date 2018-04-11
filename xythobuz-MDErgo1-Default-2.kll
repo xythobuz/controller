@@ -1,4 +1,5 @@
 Name = "MDErgo1";
+Variant = "standard";
 Layout = "Default";
 Base = "Blank";
 Version = "0.1";

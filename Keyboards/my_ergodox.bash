@@ -24,7 +24,7 @@ BaseMap="scancode_map led_map_left leftHand slave1 rightHand"
 # NOTE: To combine kll files into a single layout, separate them by spaces
 # e.g.  DefaultMap="mylayout mylayoutmod"
 #DefaultMap="mdergo1Overlay lcdFuncMap"
-DefaultMap="xythobuz-MDErgo1-Default-0 lcdFuncMap"
+DefaultMap="infinity_ergodox/all-leds xythobuz-MDErgo1-Default-0 infinity_ergodox/lcdFuncMap"
 
 # This is where you set the additional layers
 # NOTE: Indexing starts at 1
@@ -49,8 +49,8 @@ PartialMaps[2]="xythobuz-MDErgo1-Default-2"
 
 # Keyboard Module Configuration
 ScanModule="Infinity_Ergodox"
-MacroModule="PartialMap"
-OutputModule="pjrcUSB"
+MacroModule="PixelMap"
+OutputModule="USB"
 DebugModule="full"
 
 # Microcontroller

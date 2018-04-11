@@ -144,9 +144,6 @@ P[ 36]( 23:8) : S43; # D74
 P[ 37]( 39:8) : S44; # D75
 P[ 38]( 55:8) : S45; # D76
 
-
->>>>>>> upstream/master
-
 # LCD Backlight Channel Brightness Override
 # There are 3 channels, RGB
 # In order to get other colors you must mix the 3 colors

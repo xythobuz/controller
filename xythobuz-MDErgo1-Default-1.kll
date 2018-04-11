@@ -1,4 +1,5 @@
 Name = "MDErgo1";
+Variant = "standard";
 Layout = "Default";
 Base = "Blank";
 Version = "0.1";
@@ -13,9 +14,9 @@ U"4" : U"F4";
 U"3" : U"F3";
 U"2" : U"F2";
 U"1" : U"F1";
-U"LALT" : ledControl( 5, 0, 0 );
-U"HOME" : ledControl( 4, 15, 0 );
-U"END" : ledControl( 3, 15, 0 );
+U"LALT" : ledControl( 5, 0 );
+U"HOME" : ledControl( 4, 15 );
+U"END" : ledControl( 3, 15 );
 U"FUNCTION6" : U"F12";
 U"6" : U"F6";
 U"7" : U"F7";
